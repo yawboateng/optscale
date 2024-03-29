@@ -46,7 +46,7 @@ spec:
 {{- end }}
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         ports:
         - containerPort: {{ $config.service.internalPort }}
@@ -62,10 +62,11 @@ spec:
         env:
         - name: IMAGE_ID
           value: {{ $config.image.id }}
-      volumes:
-      - name: influxdb-storage
-        hostPath:
-          path: /optscale/influxdb
-          type: DirectoryOrCreate
-      nodeSelector:
-        node-role.kubernetes.io/master:
+  volumeClaimTemplates:
+  - metadata:
+      name: influxdb-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi   

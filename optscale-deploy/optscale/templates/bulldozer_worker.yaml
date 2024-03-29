@@ -27,7 +27,7 @@ spec:
 {{ include "wait_for_service" .Values.arcee | indent 6 }}
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         env:
         - name: IMAGE_ID
@@ -43,6 +43,4 @@ spec:
             mountPath: /var/lib/bulldozer/
       volumes:
         - name: bulldozer-data-volume
-          hostPath:
-            path: /optscale/bulldozer
-            type: DirectoryOrCreate
+          emptyDir: {}

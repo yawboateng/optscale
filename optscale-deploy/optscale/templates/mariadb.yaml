@@ -101,7 +101,7 @@ spec:
           mountPath: /etc/mysql/conf.d
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         env:
         - name: MARIADB_CNF_SHA
@@ -153,10 +153,6 @@ spec:
         - name: config
           mountPath: /etc/mysql/conf.d
       volumes:
-      - name: mariadb-persistent-storage
-        hostPath:
-          path: /optscale/db
-          type: DirectoryOrCreate
       - name: config
         emptyDir: {}
       - name: configmap
@@ -169,9 +165,17 @@ spec:
 {{- end }}
           - path: "mariadb.cnf"
             key: mariadb.cnf
+  volumeClaimTemplates:
+  - metadata:
+      name: mariadb-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
 {{- if .Values.db_backup.enabled }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: db-backup
@@ -193,7 +197,7 @@ spec:
         spec:
           containers:
           - name: db-backup
-            image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+            image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
             env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -218,4 +222,5 @@ spec:
             hostPath:
               path: {{ .Values.db_backup.mountpoint | quote }}
               type: DirectoryOrCreate
+      
 {{- end -}}

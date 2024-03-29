@@ -67,7 +67,7 @@ spec:
     spec:
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         env:
         - name: IMAGE_ID
@@ -93,9 +93,12 @@ spec:
           mountPath: /var/lib/elasticsearch
           readOnly: false
           mountPropagation: HostToContainer
-      volumes:
-      - name: etcd-persistent-storage
-        hostPath:
-          path: /optscale/elk
-          type: DirectoryOrCreate
+  volumeClaimTemplates:
+  - metadata:
+      name: etcd-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
 {{- end -}}

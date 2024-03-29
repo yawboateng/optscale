@@ -1,6 +1,6 @@
 {{- $config := .Values.cleaninfluxdb }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}
@@ -31,7 +31,7 @@ spec:
 {{ include "wait_for_service" .Values.influxdb | indent 10 }}
           containers:
           - name: {{ $config.name }}
-            image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+            image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
             env:
             - name: HX_INFLUXDB_HOST
               value: "{{ $config.influxdb_host }}"

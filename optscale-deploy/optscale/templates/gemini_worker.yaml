@@ -26,7 +26,7 @@ spec:
 {{ include "wait_for_service" .Values.rest_api | indent 6 }}
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         env:
         - name: IMAGE_ID
@@ -40,6 +40,4 @@ spec:
             mountPath: /usr/src/app/gemini_worker/cache
       volumes:
         - name: gemini-worker-data-volume
-          hostPath:
-            path: /optscale/gemini_worker
-            type: DirectoryOrCreate
+          emptyDir: {}

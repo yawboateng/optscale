@@ -1,15 +1,17 @@
 # Default values for optscale.
 
-tag: &tag local
+tag: &tag 2024030101-public
+repository: &repository hystax
 
 etcd:
   name: &etcd_name etcd
   replicaCount: 1
   image:
     id:
-    repository: *etcd_name
+    repository: *repository
+    name: *etcd_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: etcd-client
     type: ClusterIP
@@ -25,9 +27,10 @@ mariadb:
   replicaCount: 1
   image:
     id:
-    repository: *mariadb_name
+    repository: *repository
+    name: *mariadb_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   credentials:
     username: root
     password: my-password-01
@@ -44,9 +47,10 @@ mongo:
   cache_size: 1.0
   image:
     id:
-    repository: *mongo_name
+    repository: *repository
+    name: *mongo_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     host: *mongo_name
     name: *mongo_name
@@ -60,6 +64,7 @@ mongo:
 
 rabbitmq:
   name: &rabbit_name rabbitmq
+  storageClassName: standard-rwo
   replicaCount: 1
   mnesiaSize: 10Gi
   memory_limit: 512
@@ -83,9 +88,10 @@ redis:
   replicaCount: 1
   image:
     id:
-    repository: *redis_name
+    repository: *repository
+    name: *redis_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *redis_name
     type: ClusterIP
@@ -97,9 +103,10 @@ rest_api:
   replicaCount: 1
   image:
     id:
-    repository: rest_api
+    repository: *repository
+    name: rest_api
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *rest_api_name
     type: ClusterIP
@@ -111,9 +118,10 @@ auth:
   replicaCount: 1
   image:
     id:
-    repository: *auth_name
+    repository: *repository
+    name: *auth_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *auth_name
     type: ClusterIP
@@ -129,9 +137,10 @@ keeper:
   replicaCount: 1
   image:
     id:
-    repository: *keeper_name
+    repository: *repository
+    name: *keeper_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *keeper_name
     type: ClusterIP
@@ -160,9 +169,10 @@ herald:
     replicaCount: 2
   image:
     id:
-    repository: *herald_name
+    repository: *repository
+    name: *herald_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *herald_name
     type: ClusterIP
@@ -177,9 +187,10 @@ elk:
   es_heap_size: 1g
   image:
     id:
-    repository: *elk_name
+    repository: *repository
+    name: *elk_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *elk_name
     elastic_port: &ex_port 9200
@@ -197,9 +208,10 @@ ngui:
   replicaCount: 1
   image:
     id:
-    repository: *ngui_name
+    repository: *repository
+    name: *ngui_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *ngui_name
     type: ClusterIP
@@ -233,9 +245,10 @@ diworker:
   replicaCount: 1
   image:
     id:
-    repository: *diworker_name
+    repository: *repository
+    name: *diworker_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 katara_service:
   name: &katara_name katara
@@ -247,9 +260,10 @@ katara_service:
     replicaCount: 1
   image:
     id:
-    repository: katara_service
+    repository: *repository
+    name: katara_service
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *katara_name
     type: ClusterIP
@@ -261,43 +275,48 @@ katara_worker:
   replicaCount: 1
   image:
     id:
-    repository: katara_worker
+    repository: *repository
+    name: katara_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 bumischeduler:
   name: &bumi_scheduler_name bumischeduler
   replicaCount: 1
   image:
     id:
-    repository: *bumi_scheduler_name
+    repository: *repository
+    name: *bumi_scheduler_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 bumiworker:
   name: &bumi_worker_name bumiworker
   replicaCount: 1
   image:
     id:
-    repository: *bumi_worker_name
+    repository: *repository
+    name: *bumi_worker_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 report_import_scheduler:
   name: report-import-scheduler
   image:
-    repository: cleanelkdb # using cleanelkdb, because it has curl inside
+    repository: *repository
+    name: cleanelkdb # using cleanelkdb, because it has curl inside
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
 
 resource_discovery:
   name: resource-discovery
   replicaCount: 2 # amount of workers
   image:
-    repository: resource_discovery
+    repository: *repository
+    name: resource_discovery
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
   memory_limit: 1024
@@ -305,9 +324,10 @@ resource_discovery:
 demo_org_cleanup:
   name: demoorgcleanup
   image:
-    repository: demo_org_cleanup
+    repository: *repository
+    name: demo_org_cleanup
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 0 * * *"
 
@@ -315,9 +335,10 @@ resource_observer:
   name: resource-observer
   replicaCount: 1 # amount of workers
   image:
-    repository: resource_observer
+    repository: *repository
+    name: resource_observer
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -325,9 +346,10 @@ resource_violations:
   name: resource-violations
   replicaCount: 1 # amount of workers
   image:
-    repository: resource_violations
+    repository: *repository
+    name: resource_violations
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -335,9 +357,10 @@ calendar_observer:
   name: calendar-observer
   replicaCount: 1 # amount of workers
   image:
-    repository: calendar_observer
+    repository: *repository
+    name: calendar_observer
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 * * * *"
 
@@ -346,9 +369,10 @@ influxdb:
   replicaCount: 1
   image:
     id:
-    repository: *influx_name
+    repository: *repository
+    name: *influx_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *influx_name
     type: ClusterIP
@@ -365,8 +389,9 @@ cleaninfluxdb:
   influxdb_host: *influx_name
   influxdb_port: *influx_external_port
   image:
-    repository: *cleaninfluxdb
-    tag: local
+    repository: *repository
+    name: *cleaninfluxdb
+    tag: *tag
 
 grafana:
   name: &grafana_name grafana
@@ -374,9 +399,10 @@ grafana:
   internalPort: 3000
   image:
     id:
-    repository: *grafana_name
+    repository: *repository
+    name: *grafana_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *grafana_name
     type: NodePort
@@ -386,9 +412,10 @@ grafana:
     name: grafana-nginx
     image:
       id:
-      repository: grafana_nginx
+      repository: *repository
+      name: grafana_nginx
       tag: *tag
-      pullPolicy: Never
+      pullPolicy: IfNotPresent
   env:
     htpasswd_user: userforgrafana
     htpasswd_pass: passwordforgrafana
@@ -397,9 +424,10 @@ insider_scheduler:
   name: insider-scheduler
   replicaCount: 1
   image:
-    repository: insider_scheduler
+    repository: *repository
+    name: insider_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 0 * * *"
 
@@ -408,18 +436,20 @@ insider_worker:
   replicaCount: 1
   image:
     id:
-    repository: insider_worker
+    repository: *repository
+    name: insider_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 insider_api:
   name: &insider_api_name insider-api
   replicaCount: 1
   image:
     id:
-    repository: insider_api
+    repository: *repository
+    name: insider_api
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *insider_api_name
     type: ClusterIP
@@ -431,9 +461,10 @@ slacker:
   replicaCount: 1
   image:
     id:
-    repository: *slacker_name
+    repository: *repository
+    name: *slacker_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *slacker_name
     type: ClusterIP
@@ -449,9 +480,10 @@ error_pages:
   replicaCount: 1
   image:
     id:
-    repository: error_pages
+    repository: *repository
+    name: error_pages
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *error_pages_name
     type: ClusterIP
@@ -485,9 +517,10 @@ metroculus_scheduler:
   name: metroculusscheduler
   replicaCount: 1
   image:
-    repository: metroculus_scheduler
+    repository: *repository
+    name: metroculus_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/30 * * * *"
 
@@ -496,18 +529,20 @@ metroculus_worker:
   replicaCount: 1
   image:
     id:
-    repository: metroculus_worker
+    repository: *repository
+    name: metroculus_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 metroculus_api:
   name: &metroculus_api_name metroculusapi
   replicaCount: 1
   image:
     id:
-    repository: metroculus_api
+    repository: *repository
+    name: metroculus_api
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *metroculus_api_name
     type: ClusterIP
@@ -519,44 +554,49 @@ webhook_executor:
   replicaCount: 1
   image:
     id:
-    repository: webhook_executor
+    repository: *repository
+    name: webhook_executor
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 slacker_executor:
   name: slacker-executor
   replicaCount: 1
   image:
     id:
-    repository: slacker_executor
+    repository: *repository
+    name: slacker_executor
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 herald_executor:
   name: herald-executor
   replicaCount: 1
   image:
     id:
-    repository: herald_executor
+    repository: *repository
+    name: herald_executor
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 keeper_executor:
   name: keeper-executor
   replicaCount: 1
   image:
     id:
-    repository: keeper_executor
+    repository: *repository
+    name: keeper_executor
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 booking_observer:
   name: booking-observer
   replicaCount: 2 # amount of workers
   image:
-    repository: booking_observer
+    repository: *repository
+    name: booking_observer
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/1 * * * *"
 
@@ -565,9 +605,10 @@ arcee:
   replicaCount: 1
   image:
     id:
-    repository: arcee
+    repository: *repository
+    name: arcee
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *arcee_name
     type: ClusterIP
@@ -579,9 +620,10 @@ bulldozer_api:
   replicaCount: 1
   image:
     id:
-    repository: bulldozer_api
+    repository: *repository
+    name: bulldozer_api
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *bulldozer_api_name
     type: ClusterIP
@@ -598,18 +640,20 @@ bulldozer_worker:
     run_period: 10800
   image:
     id:
-    repository: bulldozer_worker
+    repository: *repository
+    name: bulldozer_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 jira_bus:
   name: &jira_bus_name jira-bus
   replicaCount: 1
   image:
     id:
-    repository: jira_bus
+    repository: *repository
+    name: jira_bus
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *jira_bus_name
     type: ClusterIP
@@ -621,9 +665,10 @@ jira_ui:
   replicaCount: 1
   image:
     id:
-    repository: jira_ui
+    repository: *repository
+    name: jira_ui
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *jira_ui_name
     type: ClusterIP
@@ -634,9 +679,10 @@ organization_violations:
   name: organization-violations
   replicaCount: 1 # amount of workers
   image:
-    repository: organization_violations
+    repository: *repository
+    name: organization_violations
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -644,9 +690,10 @@ cleanmongodb:
   name: cleanmongodb
   image:
     id:
-    repository: cleanmongodb
+    repository: *repository
+    name: cleanmongodb
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/3 * * * *"
   chunk_size: 500
@@ -658,9 +705,10 @@ trapper_scheduler:
   name: trapper-scheduler
   replicaCount: 1
   image:
-    repository: trapper_scheduler
+    repository: *repository
+    name: trapper_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "45 */1 * * *"
 
@@ -669,17 +717,19 @@ trapper_worker:
   replicaCount: 1
   image:
     id:
-    repository: trapper_worker
+    repository: *repository
+    name: trapper_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 risp_scheduler:
   name: risp-scheduler
   replicaCount: 1
   image:
-    repository: risp_scheduler
+    repository: *repository
+    name: risp_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "45 */1 * * *"
 
@@ -688,17 +738,19 @@ risp_worker:
   replicaCount: 1
   image:
     id:
-    repository: risp_worker
+    repository: *repository
+    name: risp_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 gemini_scheduler:
   name: gemini-scheduler
   image:
     id:
-    repository: gemini_scheduler
+    repository: *repository
+    name: gemini_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -707,17 +759,19 @@ gemini_worker:
   replicaCount: 1
   image:
     id:
-    repository: gemini_worker
+    repository: *repository
+    name: gemini_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 bi_scheduler:
   name: bi-scheduler
   image:
     id:
-    repository: bi_scheduler
+    repository: *repository
+    name: bi_scheduler
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -726,16 +780,18 @@ bi_exporter:
   replicaCount: 1
   image:
     id:
-    repository: bi_exporter
+    repository: *repository
+    name: bi_exporter
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 failed_imports_dataset_generator:
   name: failed-imports-dataset-generator
   image:
-    repository: failed_imports_dataset_generator
+    repository: *repository
+    name: failed_imports_dataset_generator
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 0 * * *"
   enable: false
@@ -747,6 +803,7 @@ failed_imports_dataset_generator:
 
 thanos_receive:
   name: &thanos_receive_name thanos-receive
+  storageClassName: standard-rwo
   dataSize: 10Gi
   replicaCount: 1
   tsdbRetention: 4h
@@ -765,6 +822,7 @@ thanos_receive:
 
 thanos_storegateway:
   name: &thanos_storegateway_name thanos-storegateway
+  storageClassName: standard-rwo
   dataSize: 10Gi
   replicaCount: 1
   # should be half of compactor deleteDelay
@@ -794,6 +852,7 @@ thanos_query:
 
 thanos_compactor:
   name: &thanos_compactor_name thanos-compactor
+  storageClassName: standard-rwo
   dataSize: 10Gi
   consistencyDelay: "4h"
   deleteDelay: "6h"
@@ -833,9 +892,10 @@ diproxy:
   replicaCount: 1
   image:
     id:
-    repository: *diproxy_name
+    repository: *repository
+    name: *diproxy_name
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: *diproxy_name
     type: ClusterIP
@@ -847,9 +907,10 @@ pharos_receiver:
   replicaCount: 1
   image:
     id:
-    repository: pharos_receiver
+    repository: *repository
+    name: pharos_receiver
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: pharos-receiver
     type: ClusterIP
@@ -861,18 +922,20 @@ pharos_worker:
   replicaCount: 1
   image:
     id:
-    repository: pharos_worker
+    repository: *repository
+    name: pharos_worker
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
 
 ohsu:
   name: ohsu
   replicaCount: 1
   image:
     id:
-    repository: ohsu
+    repository: *repository
+    name: ohsu
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   service:
     name: ohsu
     type: NodePort
@@ -884,9 +947,10 @@ ohsu:
 users_dataset_generator:
   name: users-dataset-generator
   image:
-    repository: users_dataset_generator
+    repository: *repository
+    name: users_dataset_generator
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 0 * * *"
   enable: false
@@ -900,9 +964,10 @@ live_demo_generator:
   name: live-demo-generator
   replicaCount: 1 # amount of workers
   image:
-    repository: live_demo_generator
+    repository: *repository
+    name: live_demo_generator
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 * * * *"
 
@@ -910,9 +975,10 @@ power_schedule:
   name: power-schedule
   replicaCount: 1 # amount of workers
   image:
-    repository: power_schedule
+    repository: *repository
+    name: power_schedule
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "*/5 * * * *"
 
@@ -920,9 +986,10 @@ layout_cleaner:
   name: layout-cleaner
   image:
     id:
-    repository: layout_cleaner
+    repository: *repository
+    name: layout_cleaner
     tag: *tag
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
 
@@ -975,7 +1042,8 @@ cleanelkdb:
   startingDeadlineSeconds: 100
   log_max_size: 5120
   image:
-    repository: *cleanelkdb_name
+    repository: *repository
+    name: *cleanelkdb_name
     tag: local
 
 # Set to true if you want to start/update cluster without touching existing config

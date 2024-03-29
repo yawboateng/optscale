@@ -29,7 +29,7 @@ spec:
 
       containers:
       - name: {{ $config.name }}-worker
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         env:
         - name: IMAGE_ID
@@ -39,7 +39,7 @@ spec:
         - name: HX_ETCD_PORT
           value: {{ .Values.etcd.service.externalPort | quote }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}-scheduler
@@ -71,7 +71,7 @@ spec:
 {{ include "wait_for_service" $.Values.rest_api | indent 10 }}
           containers:
           - name: {{ $config.name }}-scheduler
-            image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+            image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
             imagePullPolicy: {{ $config.image.pullPolicy }}
             command:
             - "python3"

@@ -48,7 +48,7 @@ spec:
 {{ include "wait_for_service" .Values.influxdb | indent 6 }}
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         ports:
         - containerPort: {{ $config.internalPort }}
@@ -76,7 +76,7 @@ spec:
         - name: GF_AUTH_BASIC_ENABLED
           value: "false"
       - name: "{{ $config.grafana_nginx.name }}"
-        image: "{{ $config.grafana_nginx.image.repository }}:{{ $config.grafana_nginx.image.tag }}"
+        image: "{{ $config.grafana_nginx.image.repository }}/{{ $config.grafana_nginx.image.name }}:{{ $config.grafana_nginx.image.tag }}"
         imagePullPolicy: {{ $config.grafana_nginx.image.pullPolicy }}
         ports:
         - containerPort: {{ $config.service.internalPort }}

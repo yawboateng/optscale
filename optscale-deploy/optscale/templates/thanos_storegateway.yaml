@@ -22,36 +22,38 @@ spec:
     app: {{ $config.name }}
     release: {{ .Release.Name }}
 ---
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: {{ $config.name }}
-  labels:
-    type: local
-  annotations:
-    volume.alpha.kubernetes.io/storage-class: {{ $config.name }}
-spec:
-  storageClassName: {{ $config.name }}
-  capacity:
-    storage: {{ $config.dataSize }}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  hostPath:
-    path: "/optscale/{{ $config.name }}"
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: {{ $config.name }}-claim
-spec:
-  storageClassName: {{ $config.name }}
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ $config.dataSize }}
----
+# kind: PersistentVolume
+# apiVersion: v1
+# metadata:
+#   name: {{ $config.name }}
+#   labels:
+#     type: {{ $config.storageClassName }}
+#   annotations:
+#     volume.alpha.kubernetes.io/storage-class: {{ $config.storageClassName }}
+# spec:
+#   storageClassName: {{ $config.storageClassName }}
+#   capacity:
+#     storage: {{ $config.dataSize }}
+#   accessModes:
+#     - ReadWriteOnce
+# {{- if  eq  $config.storageClassName "local-storage" }}
+#   persistentVolumeReclaimPolicy: Recycle
+#   hostPath:
+#     path: "/optscale/{{ $config.name }}"
+# {{- end }}
+# ---
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: {{ $config.name }}-claim
+# spec:
+#   storageClassName: {{ $config.name }}
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: {{ $config.dataSize }}
+# ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -129,6 +131,11 @@ spec:
             items:
               - key: thanos_conf.yaml
                 path: thanos_conf.yaml
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ $config.name }}-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ $config.dataSize }}

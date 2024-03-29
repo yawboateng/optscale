@@ -61,9 +61,7 @@ spec:
               mountPath: /etc/clickhouse-server/
       volumes:
         - name: clickhouse-data-volume
-          hostPath:
-            path: /optscale/clickhouse
-            type: DirectoryOrCreate
+          emptyDir: {}
         - name: config-volume
           configMap:
             name: {{ .Values.clickhouse.name }}-config

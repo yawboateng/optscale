@@ -1,7 +1,7 @@
 {{- $config := .Values.cleanelkdb }}
 {{ if eq .Values.deploy_cleanelkdb "true" }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}
@@ -30,7 +30,7 @@ spec:
         spec:
           containers:
           - name: {{ $config.name }}
-            image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+            image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
             env:
             - name: HX_ELK_LOG_MAX_SIZE
               value: "{{ $config.log_max_size }}"

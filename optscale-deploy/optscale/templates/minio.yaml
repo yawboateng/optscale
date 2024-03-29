@@ -81,8 +81,11 @@ spec:
           mountPath: /data
           readOnly: false
 {{ include "ready_probe" $config | indent 8 }}
-      volumes:
-      - name: minio-persistent-storage
-        hostPath:
-          path: /optscale/minio
-          type: DirectoryOrCreate
+  volumeClaimTemplates:
+  - metadata:
+      name: minio-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

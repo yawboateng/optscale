@@ -22,7 +22,7 @@ metadata:
 data:
   mongod.conf: ""
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: "{{ $config.name }}"
@@ -120,7 +120,7 @@ spec:
         - name: keydir
           mountPath: /keydir-readonly
       - name: bootstrap
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         command:
           - peer-finder
         args:
@@ -164,7 +164,7 @@ spec:
           mountPath: /work-dir
       containers:
       - name: {{ $config.name }}
-        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        image: "{{ $config.image.repository }}/{{ $config.image.name }}:{{ $config.image.tag }}"
         imagePullPolicy: "{{ $config.image.pullPolicy }}"
         ports:
         - name: mongodb
@@ -220,9 +220,13 @@ spec:
         emptyDir: {}
       - name: workdir
         emptyDir: {}
-      - name: datadir
-        hostPath:
-          path: /optscale/mongo
-          type: DirectoryOrCreate
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi    
 {{ include "anti-affinity" $config | indent 6 }}
 {{- end }}
